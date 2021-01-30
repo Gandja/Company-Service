@@ -2,6 +2,8 @@ package com.luxoft.gandzha.peopledirectoryservice.controller;
 
 import com.luxoft.gandzha.peopledirectoryservice.model.Employee;
 import com.luxoft.gandzha.peopledirectoryservice.service.EmployeeServiceImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,16 +20,15 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee")
-    public String create(@RequestBody @Valid Employee employee) {
+    public ResponseEntity<Employee> create(@RequestBody Employee employee) {
         service.create(employee);
-        return "Employee was created";
+        return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/employee/{id}")
-    public String delete(@PathVariable @Valid
-                                 Long id) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable @Valid Long id) {
         service.delete(id);
-        return "Employee was deleted";
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/employees")

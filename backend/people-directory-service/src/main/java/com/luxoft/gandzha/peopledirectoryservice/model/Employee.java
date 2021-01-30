@@ -7,9 +7,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -31,7 +33,7 @@ public class Employee {
     @Column(name = "date_of_birth")
     @NotNull(message = "Date of birth cannot be null")
     @Past(message = "The date of birth should be correct")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "position")
     private String position;
