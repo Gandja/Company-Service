@@ -1,5 +1,6 @@
 package com.luxoft.gandzha.peopledirectoryservice.controller;
 
+import com.luxoft.gandzha.peopledirectoryservice.exception.NoEntityException;
 import com.luxoft.gandzha.peopledirectoryservice.model.Employee;
 import com.luxoft.gandzha.peopledirectoryservice.service.EmployeeServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class EmployeeController {
 
     @PostMapping("/employee")
     public ResponseEntity<Employee> create(@RequestBody Employee employee) {
-        service.create(employee);
+        service.save(employee);
         return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
@@ -42,7 +43,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/{id}")
-    public Employee findById(@PathVariable("id") Long id) {
+    public Employee findById(@PathVariable("id") Long id) throws NoEntityException {
         return service.findById(id);
     }
 

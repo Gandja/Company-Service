@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -21,8 +18,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.repository = repository;
     }
 
-    public void create(Employee employee) {
+    public Employee save(Employee employee) {
         repository.save(employee);
+        return employee;
     }
 
     public void delete(Long id) {
@@ -37,23 +35,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         return repository.findByName(name);
     }
 
-    public Employee findById(Long id) {
-        Employee employee = null;
-        try {
-            employee = repository.findById(id).orElseThrow(NoEntityException::new);
-        } catch (NoEntityException e) {
-            e.printStackTrace();
-            e.getMessage();
-        }
-        return employee;
+    public Employee findById(Long id) throws NoEntityException {
+        return repository.findById(id).orElseThrow(NoEntityException::new);
     }
 
     public List<Employee> findAllByNameAndLastName(String text) {
         List<Employee> employees = new ArrayList<>();
 
         ExecutorService executorService = Executors.newCachedThreadPool();
-        CompletableFuture<List<Employee>> future = (CompletableFuture<List<Employee>>) executorService.submit(() -> findAllByName(text));
-        CompletableFuture<List<Employee>> submit = (CompletableFuture<List<Employee>>) executorService.submit(() -> findAllByLastName(text));
+        Future<List<Employee>> future =  executorService.submit(() -> findAllByName(text));
+        Future<List<Employee>> submit = executorService.submit(() -> findAllByLastName(text));
         try {
             employees.addAll(future.get());
             employees.addAll(submit.get());

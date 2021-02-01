@@ -1,12 +1,13 @@
 package com.luxoft.gandzha.peopledirectoryservice.service;
 
+import com.luxoft.gandzha.peopledirectoryservice.exception.NoEntityException;
 import com.luxoft.gandzha.peopledirectoryservice.model.Employee;
 
 import java.util.List;
 
 public interface EmployeeService {
 
-    void create(Employee employee);
+    Employee save(Employee employee);
 
     void delete(Long id);
 
@@ -14,7 +15,7 @@ public interface EmployeeService {
 
     Employee findByName(String name);
 
-    Employee findById(Long id);
+    Employee findById(Long id) throws NoEntityException;
 
     List<Employee> findAllByNameAndLastName(String text);
 

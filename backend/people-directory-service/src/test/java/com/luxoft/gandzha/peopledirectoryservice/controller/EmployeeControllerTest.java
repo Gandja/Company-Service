@@ -32,11 +32,10 @@ public class EmployeeControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    EmployeeServiceImpl employeeService;
+    EmployeeServiceImpl service;
 
     @Test
     void createEmployeeTest() throws Exception {
-
         RequestBuilder request = MockMvcRequestBuilders
                 .post("/employee")
                 .content(asJsonString(createEmployee()))
@@ -50,7 +49,6 @@ public class EmployeeControllerTest {
 
     @Test
     void deleteTest() throws Exception {
-
         RequestBuilder request = MockMvcRequestBuilders
                 .delete("/employee/{id}", 1);
 
@@ -60,10 +58,9 @@ public class EmployeeControllerTest {
 
     @Test
     void findAllTest() throws Exception {
-
         Employee employee = createEmployee();
 
-        when(employeeService.findAll()).thenReturn(Arrays.asList(employee));
+        when(service.findAll()).thenReturn(Arrays.asList(employee));
 
         RequestBuilder request = MockMvcRequestBuilders
                 .get("/employees")
@@ -76,11 +73,10 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    void findByName() throws Exception {
-
+    void findByNameTest() throws Exception {
         Employee employee = createEmployee();
 
-        when(employeeService.findByName("Denis")).thenReturn(employee);
+        when(service.findByName("Denis")).thenReturn(employee);
 
         RequestBuilder request = MockMvcRequestBuilders
                 .get("/employee")
@@ -94,11 +90,10 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    void findById() throws Exception {
-
+    void findByIdTest() throws Exception {
         Employee employee = createEmployee();
 
-        when(employeeService.findById(1l)).thenReturn(employee);
+        when(service.findById(1l)).thenReturn(employee);
 
         RequestBuilder request = MockMvcRequestBuilders
                 .get("/employee/{id}", 1)
@@ -111,11 +106,10 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    void findAllByNameAndLastName() throws Exception {
-
+    void findAllByNameAndLastNameTest() throws Exception {
         Employee employee = createEmployee();
 
-        when(employeeService.findAllByNameAndLastName("Denis"))
+        when(service.findAllByNameAndLastName("Denis"))
                 .thenReturn(Arrays.asList(employee));
 
         RequestBuilder request = MockMvcRequestBuilders
@@ -130,7 +124,6 @@ public class EmployeeControllerTest {
     }
 
     private Employee createEmployee() {
-
         Employee employee = new Employee(1l, "Denis", "Gandzha",
                 LocalDate.parse("1994-05-05"), "Programmer",
                 "460-45-98", "dg@mail.com");
@@ -139,7 +132,6 @@ public class EmployeeControllerTest {
     }
 
     private String asJsonString(Employee employee) {
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
