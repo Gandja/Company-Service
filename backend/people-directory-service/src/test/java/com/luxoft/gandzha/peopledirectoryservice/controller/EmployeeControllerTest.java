@@ -1,8 +1,11 @@
 package com.luxoft.gandzha.peopledirectoryservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.luxoft.gandzha.peopledirectoryservice.model.Employee;
 import com.luxoft.gandzha.peopledirectoryservice.service.EmployeeServiceImpl;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,22 +35,11 @@ public class EmployeeControllerTest {
     EmployeeServiceImpl employeeService;
 
     @Test
-    @DisplayName("Check request for creation employee")
-    void createTest() throws Exception {
-
-        String json = "    {\n" +
-                "        \"id\": 1,\n" +
-                "        \"name\": \"Denis\",\n" +
-                "        \"lastName\": \"Gandzha\",\n" +
-                "        \"dateOfBirth\": \"1994-05-05\",\n" +
-                "        \"position\": \"Programmer\",\n" +
-                "        \"phoneNumber\": \"460-45-98\",\n" +
-                "        \"email\": \"dg@mail.com\"\n" +
-                "    }";
+    void createEmployeeTest() throws Exception {
 
         RequestBuilder request = MockMvcRequestBuilders
                 .post("/employee")
-                .content(json)
+                .content(asJsonString(createEmployee()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
@@ -57,8 +49,8 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    @DisplayName("Check request for deleting employee by id")
     void deleteTest() throws Exception {
+
         RequestBuilder request = MockMvcRequestBuilders
                 .delete("/employee/{id}", 1);
 
@@ -67,12 +59,9 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    @DisplayName("Check request for getting all employees")
     void findAllTest() throws Exception {
 
-        Employee employee = new Employee(1l, "Denis", "Gandzha",
-                LocalDate.of(1994, 05, 05), "Programmer",
-                "460-45-98", "dg@mail.com");
+        Employee employee = createEmployee();
 
         when(employeeService.findAll()).thenReturn(Arrays.asList(employee));
 
@@ -82,26 +71,14 @@ public class EmployeeControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().json("[\n" +
-                        "    {\n" +
-                        "        \"id\": 1,\n" +
-                        "        \"name\": \"Denis\",\n" +
-                        "        \"lastName\": \"Gandzha\",\n" +
-                        "        \"dateOfBirth\": \"1994-05-05\",\n" +
-                        "        \"position\": \"Programmer\",\n" +
-                        "        \"phoneNumber\": \"460-45-98\",\n" +
-                        "        \"email\": \"dg@mail.com\"\n" +
-                        "    }]"))
+                .andExpect(content().json("[" + asJsonString(employee) +"]"))
                 .andReturn();
     }
 
     @Test
-    @DisplayName("Check request for finding employee by name")
     void findByName() throws Exception {
 
-        Employee employee = new Employee(1l, "Denis", "Gandzha",
-                LocalDate.of(1994, 05, 05), "Programmer",
-                "460-45-98", "dg@mail.com");
+        Employee employee = createEmployee();
 
         when(employeeService.findByName("Denis")).thenReturn(employee);
 
@@ -112,26 +89,14 @@ public class EmployeeControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().json(
-                        "    {\n" +
-                                "        \"id\": 1,\n" +
-                                "        \"name\": \"Denis\",\n" +
-                                "        \"lastName\": \"Gandzha\",\n" +
-                                "        \"dateOfBirth\": \"1994-05-05\",\n" +
-                                "        \"position\": \"Programmer\",\n" +
-                                "        \"phoneNumber\": \"460-45-98\",\n" +
-                                "        \"email\": \"dg@mail.com\"\n" +
-                                "    }"))
+                .andExpect(content().json(asJsonString(employee)))
                 .andReturn();
     }
 
     @Test
-    @DisplayName("Check request for finding employee by id")
     void findById() throws Exception {
 
-        Employee employee = new Employee(1l, "Denis", "Gandzha",
-                LocalDate.of(1994, 05, 05), "Programmer",
-                "460-45-98", "dg@mail.com");
+        Employee employee = createEmployee();
 
         when(employeeService.findById(1l)).thenReturn(employee);
 
@@ -141,26 +106,14 @@ public class EmployeeControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().json(
-                        "    {\n" +
-                                "        \"id\": 1,\n" +
-                                "        \"name\": \"Denis\",\n" +
-                                "        \"lastName\": \"Gandzha\",\n" +
-                                "        \"dateOfBirth\": \"1994-05-05\",\n" +
-                                "        \"position\": \"Programmer\",\n" +
-                                "        \"phoneNumber\": \"460-45-98\",\n" +
-                                "        \"email\": \"dg@mail.com\"\n" +
-                                "    }"))
+                .andExpect(content().json(asJsonString(employee)))
                 .andReturn();
     }
 
     @Test
-    @DisplayName("Check request for finding all employees by name or last name")
     void findAllByNameAndLastName() throws Exception {
 
-        Employee employee = new Employee(1l, "Denis", "Gandzha",
-                LocalDate.of(1994, 05, 05), "Programmer",
-                "460-45-98", "dg@mail.com");
+        Employee employee = createEmployee();
 
         when(employeeService.findAllByNameAndLastName("Denis"))
                 .thenReturn(Arrays.asList(employee));
@@ -172,17 +125,30 @@ public class EmployeeControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().json(
-                        "[\n" +
-                                "    {\n" +
-                                "        \"id\": 1,\n" +
-                                "        \"name\": \"Denis\",\n" +
-                                "        \"lastName\": \"Gandzha\",\n" +
-                                "        \"dateOfBirth\": \"1994-05-05\",\n" +
-                                "        \"position\": \"Programmer\",\n" +
-                                "        \"phoneNumber\": \"460-45-98\",\n" +
-                                "        \"email\": \"dg@mail.com\"\n" +
-                                "    }]"))
+                .andExpect(content().json("[" + asJsonString(employee) +"]"))
                 .andReturn();
+    }
+
+    private Employee createEmployee() {
+
+        Employee employee = new Employee(1l, "Denis", "Gandzha",
+                LocalDate.parse("1994-05-05"), "Programmer",
+                "460-45-98", "dg@mail.com");
+
+        return employee;
+    }
+
+    private String asJsonString(Employee employee) {
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        String json = "";
+        try {
+            json = mapper.writeValueAsString(employee);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 }

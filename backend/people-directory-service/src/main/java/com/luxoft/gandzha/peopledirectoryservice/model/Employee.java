@@ -1,6 +1,8 @@
 package com.luxoft.gandzha.peopledirectoryservice.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -44,5 +46,4 @@ public class Employee {
     @Column(name = "email")
     @Email(message = "Email should be valid")
     private String email;
-
 }
