@@ -3,6 +3,8 @@ package com.luxoft.gandzha.vacationservice.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -22,6 +24,12 @@ public class Employee {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "dateOfStart")
+    private LocalDate dateOfStart;
+
+    @Column(name = "vacation_balance")
+    private int vacationBalance;
 
     @Column(name = "vacation_request")
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)

@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -36,6 +37,10 @@ public class Employee {
     @NotNull(message = "Date of birth cannot be null")
     @Past(message = "The date of birth should be correct")
     private LocalDate dateOfBirth;
+
+    @Column(name = "date_of_start")
+    @NotNull(message = "Date of start cannot be null")
+    private LocalDateTime dateOfStart;
 
     @Column(name = "position")
     private String position;
